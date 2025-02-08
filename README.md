@@ -75,6 +75,12 @@ git clone https://github.com/AlexPl292/VimVim ~/.vim/pack/plugins/start/VimVim
 
 Because I can.
 
+# How it works
+
+The original Vim always remains in normal mode and is treated as a simple editor with an API.
+Any pressed key is passed to the key dispatcher, which determines what function to call. Inside these functions, API commands like `getpos` or `setline` are used to perform all needed actions.
+In VimVim's insert mode, Vim itself remains in normal mode, and letters are inserted using the API.
+
 # License
 
 VimVim is licensed under the MIT license.
