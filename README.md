@@ -4,8 +4,8 @@ An IdeaVim plugin for Vim.
 
 Now you can finally integrate Vim motions functionality into the Vim editor.
 
-IdeaVim is a Vim plugin for IntelliJ IDEA, and other JetBrains IDEs.
-FleetVim is a Vim plugin for Fleet.
+IdeaVim is a Vim plugin for IntelliJ IDEA, and other JetBrains IDEs.  
+FleetVim is a Vim plugin for Fleet.  
 VimVim is a Vim plugin for Vim.
 
 It`s like win-win, but VimVim.
@@ -19,8 +19,8 @@ Created by Alex Plate, maintainer of the [IdeaVim](https://github.com/JetBrains/
 - Install the plugin
 - Run Vim using `vim --cmd "let g:enable_vimvim = 1"`
 
-NOTE: Vim is a powerful and complex tool, and this plugin is **disabled by default**. To enable it, you must provide an additional parameter at startup.
-**Warning**: Do not run Vim with the `vimvim` plugin enabled unless you are familiar with Vim.
+NOTE: Vim motions is a powerful and complex tool, and this plugin is **disabled by default**. To enable it, you must provide an additional parameter at startup.  
+**Warning**: Do not run Vim with the `vimvim` plugin enabled unless you are familiar with Vim motions.
 
 ## Installation
 
