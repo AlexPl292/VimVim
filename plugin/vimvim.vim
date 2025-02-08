@@ -2,7 +2,7 @@
 " Maintainer: Alex Plate
 " Version: 0.1
 
-if index(v:argv, '--enable-vimvim') == -1
+if !exists('g:enable_vimvim')
     finish
 endif
 
