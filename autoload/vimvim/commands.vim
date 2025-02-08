@@ -5,24 +5,35 @@ if exists('g:loaded_vimvim_commands')
 endif
 let g:loaded_vimvim_commands = 1
 
-" Root node of the Trie
-let s:commandTrie = {}
+" Dict of tries for different modes
+let s:commandTries = {
+    \ 'NORMAL': {},
+    \ 'INSERT': {}
+\ }
 
-" Registers a new command in the Trie
-function! vimvim#commands#RegisterCommand(keys, funcName)
-    let node = s:commandTrie
-    for char in split(a:keys, '\zs') " Process each character
+" Registers a new command in the Trie for specific mode
+function! vimvim#commands#RegisterCommand(mode, keys, funcName)
+    if !has_key(s:commandTries, a:mode)
+        let s:commandTries[a:mode] = {}
+    endif
+    
+    let node = s:commandTries[a:mode]
+    for char in split(a:keys, '\zs')
         if !has_key(node, char)
             let node[char] = {}
         endif
         let node = node[char]
     endfor
-    let node['__command__'] = a:funcName " Store function at final node
+    let node['__command__'] = a:funcName
 endfunction
 
-" Retrieves the function name based on input sequence
-function! vimvim#commands#GetCommand(keys)
-    let node = s:commandTrie
+" Retrieves the function name based on input sequence and mode
+function! vimvim#commands#GetCommand(mode, keys)
+    if !has_key(s:commandTries, a:mode)
+        return ''
+    endif
+    
+    let node = s:commandTries[a:mode]
     for char in split(a:keys, '\zs')
         if !has_key(node, char)
             return ''
@@ -43,14 +54,16 @@ function! s:CollectKeys(node, prefix, result)
     endfor
 endfunction
 
-" Returns a list of all registered keys, including multi-character ones
-function! vimvim#commands#GetAllKeys()
+" Returns a list of all registered keys for a specific mode
+function! vimvim#commands#GetAllKeys(mode)
     let result = []
-    call s:CollectKeys(s:commandTrie, '', result)
+    if has_key(s:commandTries, a:mode)
+        call s:CollectKeys(s:commandTries[a:mode], '', result)
+    endif
     return result
 endfunction
 
-" Debug function to print Trie structure
-function! vimvim#commands#PrintTrie()
-    echo string(s:commandTrie)
+" Debug function to print Trie structure for a mode
+function! vimvim#commands#PrintTrie(mode)
+    echo string(get(s:commandTries, a:mode, {}))
 endfunction

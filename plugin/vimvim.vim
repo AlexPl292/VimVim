@@ -20,25 +20,36 @@ runtime autoload/vimvim/movement.vim
 
 " Function to handle key dispatch
 function! VimVim_KeyDispatcher(key)
+    " echo "Key dispatcher called with: " . a:key
     call vimvim#keyprocessor#ProcessKey(a:key)
 endfunction
 
 " Register movement commands
-call vimvim#commands#RegisterCommand('h', 'vimvim#movement#MoveLeft')
-call vimvim#commands#RegisterCommand('l', 'vimvim#movement#MoveRight')
-call vimvim#commands#RegisterCommand('j', 'vimvim#movement#MoveDown')
-call vimvim#commands#RegisterCommand('k', 'vimvim#movement#MoveUp')
+call vimvim#commands#RegisterCommand('NORMAL', 'h', 'vimvim#movement#MoveLeft')
+call vimvim#commands#RegisterCommand('NORMAL', 'l', 'vimvim#movement#MoveRight')
+call vimvim#commands#RegisterCommand('NORMAL', 'j', 'vimvim#movement#MoveDown')
+call vimvim#commands#RegisterCommand('NORMAL', 'k', 'vimvim#movement#MoveUp')
+
+" Register mode switching commands
+call vimvim#commands#RegisterCommand('NORMAL', 'i', 'vimvim#keyprocessor#EnterInsertMode')
+call vimvim#commands#RegisterCommand('INSERT', '<Esc>', 'vimvim#keyprocessor#EnterNormalMode')
 
 " Register word movement commands
-call vimvim#commands#RegisterCommand('w', 'vimvim#movement#MoveWordForward')
-call vimvim#commands#RegisterCommand('b', 'vimvim#movement#MoveWordBackward')
-call vimvim#commands#RegisterCommand('e', 'vimvim#movement#MoveWordEnd')
+call vimvim#commands#RegisterCommand('NORMAL', 'w', 'vimvim#movement#MoveWordForward')
+call vimvim#commands#RegisterCommand('NORMAL', 'b', 'vimvim#movement#MoveWordBackward')
+call vimvim#commands#RegisterCommand('NORMAL', 'e', 'vimvim#movement#MoveWordEnd')
 
-" Get all registered keys from the Trie
-let s:registered_keys = vimvim#commands#GetAllKeys()
+" Get all registered keys from the Trie for normal mode
+let s:normal_keys = vimvim#commands#GetAllKeys('NORMAL')
+let s:insert_keys = vimvim#commands#GetAllKeys('INSERT')
 
 " Map registered keys to dispatcher and suppress original functionality
-for key in s:registered_keys
-    execute 'nnoremap <silent> ' . key . ' :call VimVim_KeyDispatcher("' . key . '")<CR>'
-    execute 'nnoremap <silent> g' . key . ' :call vimvim#movement#ThrowMoveError()<CR>'
+for key in s:normal_keys
+    let escaped_key = escape(key, "<>")
+    execute 'nnoremap <silent> ' . key . ' :call VimVim_KeyDispatcher("' . escaped_key . '")<CR>'
+endfor
+
+for key in s:insert_keys
+    let escaped_key = escape(key, "<>")
+    execute 'nnoremap <silent> ' . key . ' :call VimVim_KeyDispatcher("' . escaped_key . '")<CR>'
 endfor
