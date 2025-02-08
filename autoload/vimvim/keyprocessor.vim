@@ -8,11 +8,14 @@ let g:loaded_vimvim_keyprocessor = 1
 " Constants for modes
 let s:MODE_NORMAL = 'NORMAL'
 let s:MODE_INSERT = 'INSERT'
+let s:MODE_OPERATOR_PENDING = 'OPERATOR-PENDING'
 
 " Stores the current input sequence
 let s:inputSequence = ''
 " Current mode - default to NORMAL
 let s:currentMode = s:MODE_NORMAL
+" Store the pending operator when in operator-pending mode
+let s:pendingOperator = ''
 
 " Processes a single keypress
 function! vimvim#keyprocessor#ProcessKey(key)
@@ -53,6 +56,29 @@ function! vimvim#keyprocessor#ProcessKey(key)
         call setline('.', new_line)
         call cursor(pos[1], pos[2] + 1)  " Move cursor right
         return
+    elseif s:currentMode ==# s:MODE_OPERATOR_PENDING
+        " Process the motion/text object after the operator
+        let motion_command = vimvim#commands#GetCommand(s:currentMode, key)
+        if motion_command != ''
+            " Execute the operator with the motion
+            call vimvim#keyprocessor#ExecuteOperatorWithMotion(s:pendingOperator, motion_command)
+            let s:pendingOperator = ''
+            if s:currentMode ==# s:MODE_OPERATOR_PENDING
+                call vimvim#keyprocessor#EnterNormalMode()
+            endif
+            let s:inputSequence = ''
+        else
+            " Check if it's a partial match
+            if !vimvim#keyprocessor#IsPartialCommand(key)
+                " Invalid motion - cancel operator
+                let s:pendingOperator = ''
+                call vimvim#keyprocessor#EnterNormalMode()
+                let s:inputSequence = ''
+            else
+                let s:inputSequence .= key
+            endif
+        endif
+        return
     endif
 
     " Normal mode processing
@@ -60,7 +86,13 @@ function! vimvim#keyprocessor#ProcessKey(key)
     let command = vimvim#commands#GetCommand(s:currentMode, s:inputSequence)
 
     if command != ''
-        call vimvim#keyprocessor#ExecuteCommand(command)
+        " Check if this is an operator command
+        if vimvim#commands#IsOperator(command)
+            let s:pendingOperator = command
+            call vimvim#keyprocessor#EnterOperatorPendingMode()
+        else
+            call vimvim#keyprocessor#ExecuteCommand(command)
+        endif
         let s:inputSequence = ''  " Reset sequence after execution
     else
         " Check if it's a partial match or invalid input
@@ -93,7 +125,7 @@ endfunction
 
 " Mode management functions
 function! vimvim#keyprocessor#SetMode(mode)
-    if a:mode ==# s:MODE_NORMAL || a:mode ==# s:MODE_INSERT
+    if a:mode ==# s:MODE_NORMAL || a:mode ==# s:MODE_INSERT || a:mode ==# s:MODE_OPERATOR_PENDING
         let s:currentMode = a:mode
         " Optional: Show mode change in status line
         echo "-VimVim- " . s:currentMode . " --"
@@ -110,6 +142,24 @@ endfunction
 function! vimvim#keyprocessor#EnterNormalMode()
     set virtualedit=
     call vimvim#keyprocessor#SetMode(s:MODE_NORMAL)
+endfunction
+
+" Function to enter operator-pending mode
+function! vimvim#keyprocessor#EnterOperatorPendingMode()
+    call vimvim#keyprocessor#SetMode(s:MODE_OPERATOR_PENDING)
+endfunction
+
+" Execute an operator with a motion
+function! vimvim#keyprocessor#ExecuteOperatorWithMotion(operator, motion)
+    " Get the range affected by the motion
+    let [start_pos, end_pos] = vimvim#movement#GetMotionRange(a:motion)
+    
+    " Execute the operator on the range
+    if exists('*' . a:operator)
+        execute 'call ' . a:operator . '(start_pos, end_pos)'
+    else
+        echohl Error | echom "Unknown operator: " . a:operator | echohl None
+    endif
 endfunction
 
 function! vimvim#keyprocessor#GetMode()

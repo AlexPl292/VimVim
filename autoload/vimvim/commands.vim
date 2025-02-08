@@ -67,3 +67,12 @@ endfunction
 function! vimvim#commands#PrintTrie(mode)
     echo string(get(s:commandTries, a:mode, {}))
 endfunction
+
+" Check if a command is an operator
+function! vimvim#commands#IsOperator(command)
+    let operators = [
+        \ 'vimvim#operators#Delete',
+        \ 'vimvim#operators#Change'
+    \ ]
+    return index(operators, a:command) >= 0
+endfunction

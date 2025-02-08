@@ -17,6 +17,7 @@ echo "VimVim plugin is loaded. Happy Vimming!"
 runtime autoload/vimvim/commands.vim
 runtime autoload/vimvim/keyprocessor.vim
 runtime autoload/vimvim/movement.vim
+runtime autoload/vimvim/operators.vim
 
 " Function to handle key dispatch
 function! VimVim_KeyDispatcher(key)
@@ -46,9 +47,25 @@ call vimvim#commands#RegisterCommand('NORMAL', 'w', 'vimvim#movement#MoveWordFor
 call vimvim#commands#RegisterCommand('NORMAL', 'b', 'vimvim#movement#MoveWordBackward')
 call vimvim#commands#RegisterCommand('NORMAL', 'e', 'vimvim#movement#MoveWordEnd')
 
+" Register operators
+call vimvim#commands#RegisterCommand('NORMAL', 'd', 'vimvim#operators#Delete')
+call vimvim#commands#RegisterCommand('NORMAL', 'c', 'vimvim#operators#Change')
+
+" Register operator-pending mode motions
+call vimvim#commands#RegisterCommand('OPERATOR-PENDING', 'w', 'vimvim#movement#MoveWordForward')
+call vimvim#commands#RegisterCommand('OPERATOR-PENDING', 'b', 'vimvim#movement#MoveWordBackward')
+call vimvim#commands#RegisterCommand('OPERATOR-PENDING', 'e', 'vimvim#movement#MoveWordEnd')
+call vimvim#commands#RegisterCommand('OPERATOR-PENDING', 'h', 'vimvim#movement#MoveLeft')
+call vimvim#commands#RegisterCommand('OPERATOR-PENDING', 'l', 'vimvim#movement#MoveRight')
+call vimvim#commands#RegisterCommand('OPERATOR-PENDING', 'j', 'vimvim#movement#MoveDown')
+call vimvim#commands#RegisterCommand('OPERATOR-PENDING', 'k', 'vimvim#movement#MoveUp')
+call vimvim#commands#RegisterCommand('OPERATOR-PENDING', '$', 'vimvim#movement#MoveToLineEnd')
+call vimvim#commands#RegisterCommand('OPERATOR-PENDING', '0', 'vimvim#movement#MoveToLineStart')
+
 " Get all registered keys from the Trie for normal mode
 let s:normal_keys = vimvim#commands#GetAllKeys('NORMAL')
 let s:insert_keys = vimvim#commands#GetAllKeys('INSERT')
+let s:operator_pending_keys = vimvim#commands#GetAllKeys('OPERATOR-PENDING')
 
 " Map registered keys to dispatcher and suppress original functionality
 for key in s:normal_keys
@@ -57,6 +74,12 @@ for key in s:normal_keys
 endfor
 
 for key in s:insert_keys
+    let escaped_key = escape(key, "<>")
+    execute 'nnoremap <silent> ' . key . ' :call VimVim_KeyDispatcher("' . escaped_key . '")<CR>'
+endfor
+
+" Map operator-pending mode keys
+for key in s:operator_pending_keys
     let escaped_key = escape(key, "<>")
     execute 'nnoremap <silent> ' . key . ' :call VimVim_KeyDispatcher("' . escaped_key . '")<CR>'
 endfor

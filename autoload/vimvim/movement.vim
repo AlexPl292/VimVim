@@ -107,3 +107,37 @@ function! vimvim#movement#MoveWordEnd()
 
     call vimvim#movement#MoveCursor(l:line, l:pos)
 endfunction
+
+" Get the range affected by a motion
+function! vimvim#movement#GetMotionRange(motion)
+    " Save current position
+    let start_pos = getpos('.')
+    
+    " Execute the motion to get end position
+    if exists('*' . a:motion)
+        execute 'call ' . a:motion . '()'
+    endif
+    let end_pos = getpos('.')
+    
+    " Ensure start_pos is before end_pos
+    if start_pos[1] > end_pos[1] || (start_pos[1] == end_pos[1] && start_pos[2] > end_pos[2])
+        let temp = start_pos
+        let start_pos = end_pos
+        let end_pos = temp
+    endif
+    
+    " Return to original position
+    call setpos('.', start_pos)
+    
+    return [start_pos, end_pos]
+endfunction
+
+" Line end motion
+function! vimvim#movement#MoveToLineEnd()
+    call cursor(line('.'), col('$'))
+endfunction
+
+" Line start motion
+function! vimvim#movement#MoveToLineStart()
+    call cursor(line('.'), 1)
+endfunction
