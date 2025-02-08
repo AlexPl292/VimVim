@@ -1,8 +1,12 @@
 # VimVim.vim
 
-A Vim plugin for Vim.
+An IdeaVim plugin for Vim.
 
 Now you can finally integrate Vim motions functionality into the Vim editor.
+
+IdeaVim is a Vim plugin for IntelliJ IDEA, and other JetBrains IDEs.
+FleetVim is a Vim plugin for Fleet.
+VimVim is a Vim plugin for Vim.
 
 It`s like win-win, but VimVim.
 
