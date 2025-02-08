@@ -4,17 +4,74 @@ A Vim plugin for Vim.
 
 Now you can finally integrate Vim motions functionality into the Vim editor.
 
-It's like win-win, but VimVim.
+It`s like win-win, but VimVim.
 
 Created by Alex Plate, maintainer of the [IdeaVim](https://github.com/JetBrains/ideavim) plugin.
 
 [IdeaVim](https://github.com/JetBrains/ideavim) is a Vim engine for JetBrains IDEs. Known for their extensive features and ready-to-use environment, JetBrains IDEs make IdeaVim a powerful tool for bringing Vim functionality into modern development workflows.
 
-## Rationale for creating this plugin
+# Usage
+
+- Install the plugin
+- Run Vim using `vim --cmd "let g:enable_vimvim = 1"`
+
+NOTE: Vim is a powerful and complex tool, and this plugin is **disabled by default**. To enable it, you must provide an additional parameter at startup.
+**Warning**: Do not run Vim with the `vimvim` plugin enabled unless you are familiar with Vim.
+
+## Installation
+
+You can install the `VimVim` plugin using various plugin managers.
+
+### **vim-plug**
+Add the following line to your `~/.vimrc` (or `~/.config/nvim/init.vim` for Neovim):
+```
+Plug `AlexPl292/VimVim`
+```
+Then, restart Vim and run:
+```
+:PlugInstall
+```
+
+### **Vundle**
+Add the following line to your `~/.vimrc`:
+```
+Plugin `AlexPl292/VimVim`
+```
+Then, restart Vim and run:
+```
+:PluginInstall
+```
+
+### **Pathogen**
+Clone the repository into your `~/.vim/bundle/` directory:
+```
+git clone https://github.com/AlexPl292/VimVim ~/.vim/bundle/VimVim
+```
+
+### **Lazy.nvim (for Neovim)**
+Add the following to your Neovim `lua/plugins.lua` configuration:
+```
+{
+    `AlexPl292/VimVim`,
+    lazy = false -- Load on startup
+}
+```
+Then reload Neovim and run:
+```
+:Lazy sync
+```
+
+### **Manual Installation**
+If you prefer to install the plugin manually:
+```
+git clone https://github.com/AlexPl292/VimVim ~/.vim/pack/plugins/start/VimVim
+```
+
+# Rationale for creating this plugin
 
 Because I can.
 
-## License
+# License
 
 VimVim is licensed under the MIT license.
 
