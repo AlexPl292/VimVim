@@ -1,8 +1,3 @@
-" Throw error when original movement keys are used
-function! vimvim#movement#ThrowMoveError()
-    throw "Use custom movement functions instead of original keys!"
-endfunction
-
 " Get current cursor position
 function! vimvim#movement#GetPosition()
     let l:pos = getcurpos()

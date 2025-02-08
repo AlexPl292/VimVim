@@ -1,5 +1,5 @@
 " vimvim.vim - A Vim plugin for Vim
-" Maintainer: Alex Plate
+" Author: Alex Plate
 " Version: 0.1
 
 if !exists('g:enable_vimvim')
@@ -11,27 +11,34 @@ if exists('g:loaded_vimvim')
 endif
 let g:loaded_vimvim = 1
 
-" Load movement mappings
-nnoremap <silent> h :call vimvim#movement#MoveLeft()<CR>
-nnoremap <silent> j :call vimvim#movement#MoveDown()<CR>
-nnoremap <silent> k :call vimvim#movement#MoveUp()<CR>
-nnoremap <silent> l :call vimvim#movement#MoveRight()<CR>
+echo "VimVim plugin is loaded. Happy Vimming!"
 
-nnoremap <silent> <Left> :call vimvim#movement#MoveLeft()<CR>
-nnoremap <silent> <Right> :call vimvim#movement#MoveRight()<CR>
-nnoremap <silent> <Up> :call vimvim#movement#MoveUp()<CR>
-nnoremap <silent> <Down> :call vimvim#movement#MoveDown()<CR>
+" Ensure dependencies are loaded
+runtime autoload/vimvim/commands.vim
+runtime autoload/vimvim/keyprocessor.vim
+runtime autoload/vimvim/movement.vim
 
-nnoremap <silent> w :call vimvim#movement#MoveWordForward()<CR>
-nnoremap <silent> b :call vimvim#movement#MoveWordBackward()<CR>
-nnoremap <silent> e :call vimvim#movement#MoveWordEnd()<CR>
+" Function to handle key dispatch
+function! VimVim_KeyDispatcher(key)
+    call vimvim#keyprocessor#ProcessKey(a:key)
+endfunction
 
-" Map original keys to throw errors
-nnoremap <silent> gk :call vimvim#movement#ThrowMoveError()<CR>
-nnoremap <silent> gj :call vimvim#movement#ThrowMoveError()<CR>
-nnoremap <silent> gh :call vimvim#movement#ThrowMoveError()<CR>
-nnoremap <silent> gl :call vimvim#movement#ThrowMoveError()<CR>
-nnoremap <silent> gw :call vimvim#movement#ThrowMoveError()<CR>
-nnoremap <silent> gb :call vimvim#movement#ThrowMoveError()<CR>
-nnoremap <silent> ge :call vimvim#movement#ThrowMoveError()<CR>
-nnoremap <silent> x :call vimvim#movement#ThrowMoveError()<CR>
+" Register movement commands
+call vimvim#commands#RegisterCommand('h', 'vimvim#movement#MoveLeft')
+call vimvim#commands#RegisterCommand('l', 'vimvim#movement#MoveRight')
+call vimvim#commands#RegisterCommand('j', 'vimvim#movement#MoveDown')
+call vimvim#commands#RegisterCommand('k', 'vimvim#movement#MoveUp')
+
+" Register word movement commands
+call vimvim#commands#RegisterCommand('w', 'vimvim#movement#MoveWordForward')
+call vimvim#commands#RegisterCommand('b', 'vimvim#movement#MoveWordBackward')
+call vimvim#commands#RegisterCommand('e', 'vimvim#movement#MoveWordEnd')
+
+" Get all registered keys from the Trie
+let s:registered_keys = vimvim#commands#GetAllKeys()
+
+" Map registered keys to dispatcher and suppress original functionality
+for key in s:registered_keys
+    execute 'nnoremap <silent> ' . key . ' :call VimVim_KeyDispatcher("' . key . '")<CR>'
+    execute 'nnoremap <silent> g' . key . ' :call vimvim#movement#ThrowMoveError()<CR>'
+endfor
