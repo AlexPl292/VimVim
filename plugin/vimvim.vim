@@ -30,6 +30,13 @@ call vimvim#commands#RegisterCommand('NORMAL', 'l', 'vimvim#movement#MoveRight')
 call vimvim#commands#RegisterCommand('NORMAL', 'j', 'vimvim#movement#MoveDown')
 call vimvim#commands#RegisterCommand('NORMAL', 'k', 'vimvim#movement#MoveUp')
 
+" Register editing commands
+call vimvim#commands#RegisterCommand('NORMAL', 'a', 'vimvim#keyprocessor#AppendAfterCursor')
+call vimvim#commands#RegisterCommand('NORMAL', 'A', 'vimvim#keyprocessor#AppendAtLineEnd')
+call vimvim#commands#RegisterCommand('NORMAL', 'o', 'vimvim#keyprocessor#OpenLineBelow')
+call vimvim#commands#RegisterCommand('NORMAL', 's', 'vimvim#keyprocessor#SubstituteChar')
+call vimvim#commands#RegisterCommand('NORMAL', 'x', 'vimvim#keyprocessor#DeleteChar')
+
 " Register mode switching commands
 call vimvim#commands#RegisterCommand('NORMAL', 'i', 'vimvim#keyprocessor#EnterInsertMode')
 call vimvim#commands#RegisterCommand('INSERT', '<Esc>', 'vimvim#keyprocessor#EnterNormalMode')

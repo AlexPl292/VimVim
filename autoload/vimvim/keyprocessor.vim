@@ -120,3 +120,40 @@ endfunction
 function! vimvim#keyprocessor#ShowStatus()
     echo "Mode: " . s:currentMode . " | Sequence: " . s:inputSequence
 endfunction
+
+" Function to append after cursor
+function! vimvim#keyprocessor#AppendAfterCursor()
+    call cursor(line('.'), col('.') + 1)
+    call vimvim#keyprocessor#EnterInsertMode()
+endfunction
+
+" Function to append at end of line
+function! vimvim#keyprocessor#AppendAtLineEnd()
+    set virtualedit=onemore
+    call cursor(line('.'), col('$'))
+    call vimvim#keyprocessor#EnterInsertMode()
+endfunction
+
+" Function to open new line below
+function! vimvim#keyprocessor#OpenLineBelow()
+    call append(line('.'), '')
+    call cursor(line('.') + 1, 1)
+    call vimvim#keyprocessor#EnterInsertMode()
+endfunction
+
+" Function to substitute character
+function! vimvim#keyprocessor#SubstituteChar()
+    let line = getline('.')
+    let pos = getpos('.')
+    let new_line = strpart(line, 0, pos[2] - 1) . strpart(line, pos[2])
+    call setline('.', new_line)
+    call vimvim#keyprocessor#EnterInsertMode()
+endfunction
+
+" Function to delete character under cursor
+function! vimvim#keyprocessor#DeleteChar()
+    let line = getline('.')
+    let pos = getpos('.')
+    let new_line = strpart(line, 0, pos[2] - 1) . strpart(line, pos[2])
+    call setline('.', new_line)
+endfunction
