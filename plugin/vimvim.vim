@@ -2,6 +2,10 @@
 " Maintainer: Alex Plate
 " Version: 0.1
 
+if index(v:argv, '--enable-vimvim') == -1
+    finish
+endif
+
 if exists('g:loaded_vimvim')
     finish
 endif
