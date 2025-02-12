@@ -3,11 +3,20 @@
 Before:
   :LoadVimVim
 
-Do:
+Do (Just some random action):
   x
 
 Then:
   AssertEqual 1, g:loaded_vimvim
+
+Given:
+  One
+
+Do:
+  x
+
+Expect:
+  ne
 
 Given:
   One Two Three
