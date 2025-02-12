@@ -1,28 +1,209 @@
 " Test file for vimvim commands registry
 
-Before:
+Before (Load VimVim for all tests):
   :LoadVimVim
 
-Do (Just some random action):
+
+# Initial Sanity Check
+Do (Simple command to verify plugin is loaded):
   x
 
-Then:
+Then (Verify plugin is loaded):
   AssertEqual 1, g:loaded_vimvim
 
-Given:
-  One
+# Basic Movement Tests
+Given (Basic text for movement):
+  First line of text
+  Second line of text
+  Third line of text
 
-Do:
+Do (Test h movement):
+  llllh
+
+Then (Verify cursor position after h movement):
+  AssertEqual [1, 4], [line('.'), col('.')]
+
+Do (Test l movement):
+  lll
+
+Then (Verify cursor position after l movement):
+  AssertEqual [1, 4], [line('.'), col('.')]
+
+Do (Test j movement):
+  jj
+
+Then (Verify cursor position after j movement):
+  AssertEqual [3, 1], [line('.'), col('.')]
+
+Do (Test k movement):
+  jjk
+
+Then (Verify cursor position after k movement):
+  AssertEqual [2, 1], [line('.'), col('.')]
+
+# Word Movement Tests
+Given (Text for word movement):
+  word1 word2 word3
+  test-hyphen compound-word
+  end.of.sentence
+
+Do (Test w movement):
+  w
+
+Then (Verify cursor position after w movement):
+  AssertEqual [1, 7], [line('.'), col('.')]
+
+Do (Test b movement):
+  wwb
+
+Then (Verify cursor position after b movement):
+  AssertEqual [1, 7], [line('.'), col('.')]
+
+Do (Test e movement):
+  e
+
+Then (Verify cursor position after e movement):
+  AssertEqual [1, 5], [line('.'), col('.')]
+
+# Editing Tests
+Given (Text for editing):
+  Edit this line
+  Another line
+
+Do (Test x command):
   x
 
-Expect:
-  ne
+Expect (Delete character under cursor):
+  dit this line
+  Another line
 
-Given:
-  One Two Three
+" Do (TODO: Test s command):
+"   sR
+" 
+" Expect (Substitute character and insert):
+"   Rdit this line
+"   Another line
 
-Do:
+After (Reset VimVim):
+  call vimvim#keyprocessor#EnterNormalMode()
+
+Given (Text for append tests):
+  Line for append
+  Second line
+
+Do (Test a command):
+  ahjkl
+
+Expect (Append after cursor):
+  Lhjkline for append
+  Second line
+
+Do (Test A command):
+  Ahjkl
+
+Expect (Append at end of line):
+  Line for appendhjkl
+  Second line
+
+" Do (Test o command):
+"   onew line
+" 
+" Expect (Open line below):
+"   Line for append
+"   new line
+"   Second line
+
+# Operator Tests
+Given (Text for operator tests):
+  Delete this word please
+  Change that word now
+  Multiple lines to operate on
+  Last line here
+
+Do (Test dw command):
+  dw
+
+Expect (Delete word INCORRECT):
+  his word please
+  Change that word now
+  Multiple lines to operate on
+  Last line here
+
+Do (Test cw command):
+  cwhjkl
+
+Expect (Change word INCORRECT):
+  hjklhis word please
+  Change that word now
+  Multiple lines to operate on
+  Last line here
+
+Do (Test d$ command):
+  d$
+
+Expect (Delete to end of line):
+  
+  Change that word now
+  Multiple lines to operate on
+  Last line here
+
+" Do (Test dj command):
+"   dj
+" 
+" Expect (Delete current and next line):
+"   Multiple lines to operate on
+"   Last line here
+" 
+# Mode Switching Tests
+Given (Text for mode switching):
+  Test insert mode
+  Another line
+
+Do (Test i command with text):
+  ihjkl
+
+Expect (Enter insert mode and insert text):
+  hjklTest insert mode
+  Another line
+
+Given (Text for mode switching):
+  Test insert mode
+  Another line
+
+Do (Test <Esc> to exit insert mode):
+  ihell<Esc>x
+
+Expect (Insert text, exit to normal mode, delete char INCORRECT):
+  schellTest insert mode
+  Another line
+
+# Combined Operation Tests
+Given (Text for combined operations):
+  First test line
+  Second test line
+  Third test line
+
+Do (Multiple operations: move and delete):
   wdw
 
-Expect (Incorrect Execution):
-  One hree
+Expect (Move to word and delete next word INCORRECT):
+  First ine
+  Second test line
+  Third test line
+
+Do (Change with movement):
+  wcwhjkl
+
+Expect (Move and change word):
+  First hjkline
+  Second test line
+  Third test line
+
+" Do (Complex sequence):
+"   wdwjA_append
+" 
+" Expect (Multiple operations in sequence):
+"   First line
+"   Second test line_append
+"   Third test line
+" 
