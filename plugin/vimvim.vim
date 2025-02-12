@@ -83,3 +83,5 @@ for key in s:operator_pending_keys
     let escaped_key = escape(key, "<>")
     execute 'nnoremap <silent> ' . key . ' :call VimVim_KeyDispatcher("' . escaped_key . '")<CR>'
 endfor
+
+nnoremap <silent> <Space>  :call VimVim_KeyDispatcher("\<Space\>")<CR>

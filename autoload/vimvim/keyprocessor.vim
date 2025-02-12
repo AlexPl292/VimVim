@@ -35,7 +35,8 @@ function! vimvim#keyprocessor#ProcessKey(key)
         let pos = getpos('.')  " Get cursor position [bufnum, lnum, col, off]
         let line = getline('.')
         let char = key
-        
+
+        " echo "Key: " . key
         " Handle special keys
         if key ==# '<Space>'
             let char = ' '
