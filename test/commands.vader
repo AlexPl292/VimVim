@@ -1,0 +1,19 @@
+" Test file for vimvim commands registry
+
+Before:
+  :LoadVimVim
+
+Do:
+  x
+
+Then:
+  AssertEqual 1, g:loaded_vimvim
+
+Given:
+  One Two Three
+
+Do:
+  wdw
+
+Expect (Incorrect Execution):
+  One hree
