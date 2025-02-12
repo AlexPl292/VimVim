@@ -8,6 +8,9 @@ endif
 
 " Function to load the plugin
 function! s:LoadVimVim()
+    if exists('g:loaded_vimvim')
+        return
+    endif
     let g:loaded_vimvim = 1
 
     " Ensure dependencies are loaded

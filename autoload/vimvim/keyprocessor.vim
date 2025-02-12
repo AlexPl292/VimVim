@@ -114,7 +114,7 @@ endfunction
 
 " Checks if any command starts with the given input sequence (for multi-key commands)
 function! vimvim#keyprocessor#IsPartialCommand(sequence)
-    let node = s:commandTries[s:currentMode]
+    let node = g:vimvim_commandTries[s:currentMode]
     for char in split(a:sequence, '\zs')
         if !has_key(node, char)
             return 0  " No valid command starts with this

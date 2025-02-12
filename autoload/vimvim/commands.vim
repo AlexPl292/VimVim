@@ -6,18 +6,20 @@ endif
 let g:loaded_vimvim_commands = 1
 
 " Dict of tries for different modes
-let s:commandTries = {
-    \ 'NORMAL': {},
-    \ 'INSERT': {}
-\ }
+if !exists('g:vimvim_commandTries')
+    let g:vimvim_commandTries = {
+        \ 'NORMAL': {},
+        \ 'INSERT': {}
+    \ }
+endif
 
 " Registers a new command in the Trie for specific mode
 function! vimvim#commands#RegisterCommand(mode, keys, funcName)
-    if !has_key(s:commandTries, a:mode)
-        let s:commandTries[a:mode] = {}
+    if !has_key(g:vimvim_commandTries, a:mode)
+        let g:vimvim_commandTries[a:mode] = {}
     endif
     
-    let node = s:commandTries[a:mode]
+    let node = g:vimvim_commandTries[a:mode]
     for char in split(a:keys, '\zs')
         if !has_key(node, char)
             let node[char] = {}
@@ -29,11 +31,11 @@ endfunction
 
 " Retrieves the function name based on input sequence and mode
 function! vimvim#commands#GetCommand(mode, keys)
-    if !has_key(s:commandTries, a:mode)
+    if !has_key(g:vimvim_commandTries, a:mode)
         return ''
     endif
     
-    let node = s:commandTries[a:mode]
+    let node = g:vimvim_commandTries[a:mode]
     for char in split(a:keys, '\zs')
         if !has_key(node, char)
             return ''
@@ -57,15 +59,15 @@ endfunction
 " Returns a list of all registered keys for a specific mode
 function! vimvim#commands#GetAllKeys(mode)
     let result = []
-    if has_key(s:commandTries, a:mode)
-        call s:CollectKeys(s:commandTries[a:mode], '', result)
+    if has_key(g:vimvim_commandTries, a:mode)
+        call s:CollectKeys(g:vimvim_commandTries[a:mode], '', result)
     endif
     return result
 endfunction
 
 " Debug function to print Trie structure for a mode
 function! vimvim#commands#PrintTrie(mode)
-    echo string(get(s:commandTries, a:mode, {}))
+    echo string(get(g:vimvim_commandTries, a:mode, {}))
 endfunction
 
 " Check if a command is an operator
